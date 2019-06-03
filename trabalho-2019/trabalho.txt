@@ -1,0 +1,183 @@
+#include <cstdlib>
+#include <iostream>
+
+using namespace std;
+
+
+// qtd de permutacoes � calculado 2 elevado ao numero de digitos dado pelo usuario
+int qtdpermuta(int x)  		
+	{
+	int pot;
+	pot=1;
+	for (int i=1; i<=x; i++)
+		pot=pot*2;
+
+	return pot;
+	}
+
+// qtd de nos da arvore 
+int qtdno(int x)		
+	{
+		int somano=0;
+		for (int j=1;j<=x;j++)
+		{
+			somano=somano+qtdpermuta(j);
+		}
+		return (somano);
+	}
+
+
+class Node
+{
+private:
+        
+Node* esquerda;
+Node* direita;
+         
+
+public:
+
+int valor;
+Node* pai;
+
+//construtor cria todos nodes filho recursivamente
+Node(int valor, int nivel, int k, Node* pai) 
+         {
+	this->valor = valor;
+	this->pai = pai;
+	if (nivel >= k)  // verifica se chegou no nivel k(limite)
+	{
+		this->direita = NULL;   //se chegou, o node ser� folha
+		this->esquerda = NULL;
+	}
+	else 
+	{	//se nao continua a criar nos esquerda e direita
+		this->direita = new Node(0, nivel + 1, k, this);
+		this->esquerda = new Node(1, nivel + 1, k, this);
+	}
+
+         }
+
+Node* getEsquerda()
+{
+	return this->esquerda;
+}
+Node* getDireita()
+{
+	return this->direita;
+}
+int getValor()
+{
+	return this->valor;
+}
+
+
+//obten��o recursiva do pr�ximo n� para poder imprimir
+Node* getProximo()
+ {
+	 Node* proximo;
+	 proximo = NULL;
+	 if (pai != NULL)
+	{
+		 if (this == pai->getDireita())
+		{
+			 proximo = pai->getEsquerda();
+		 }
+		 else 
+		{
+			proximo = pai->getProximo();
+			if (proximo != NULL)
+			{
+				 proximo = proximo->getDireita();
+			 }
+		 }
+	}
+	return proximo;
+ }
+
+};
+
+class Arvore
+{
+	private:
+	Node* raiz;
+	public:
+	Arvore(int k)
+	{
+		raiz = new Node(0, 0, k, NULL);
+	}
+	Node* getRaiz()
+	{
+		return this->raiz;
+	}    
+};
+
+//Impress�o recursiva para cada linha
+void imprimir(Node* atual)
+{  
+	//Desconsidera o n� raiz
+	if (atual->pai != NULL)
+	{  
+		imprimir(atual->pai);
+		printf("\t");
+		printf("%d", atual->valor);
+		
+	}
+}
+
+
+int main(int argc, char *argv[])
+{
+    
+int n, qtdnodes, permut;
+qtdnodes=0;
+permut=0;
+  
+printf("Qual tamanho voce quer de digitos?   ");
+scanf ("%d",&n);
+
+permut=qtdpermuta(n);
+printf("\n\n");
+
+
+printf("Total de permutacoes geradas: %d\n", permut); 
+printf("\n");
+qtdnodes=qtdno(n);
+printf("A arvore binaria eh composta por  %d nos\n", qtdnodes+1); 
+printf("\n");
+printf("As permutacoes geradas com %d digitos: \n", n); 
+
+
+    
+Arvore* tree = new Arvore(n);     //arvore gerada toda aqui
+Node* raiz = tree->getRaiz();
+
+//impress�o da �rvore
+Node* primeiro;
+
+primeiro = raiz->getDireita();
+if (primeiro != NULL)
+{ 
+	int i=1;
+			
+	while (primeiro->getDireita() != NULL)
+	{
+		primeiro = primeiro->getDireita();
+	} 
+		Node* atual; 
+		atual = primeiro; 
+		while (atual != NULL) 
+		{  
+			printf("Permutacao %d: \t", i); 
+			i=i+1;
+			imprimir(atual);
+			
+			printf("\n");
+			
+			atual = atual->getProximo();   
+		} 
+}
+
+    system("PAUSE");
+    return EXIT_SUCCESS;
+}
