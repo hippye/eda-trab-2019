@@ -8,15 +8,7 @@ public:
 	No *esq;
 	No *dir;
 	No *pai;
-	No getProximo() {
-		No *proximo;
-		proximo = NULL;
-		if (pai != NULL) {
-			if (this == pai->esq) {
-				proximo = pai->dir;
-			}
-		}
-	}
+	No* proximo();
 };
 
 class Arvore {
@@ -27,6 +19,7 @@ public:
 	void inserir(int i);
 	bool remover(int i);
 	int qtdelementos();
+	void imprimirNo(No* atual);
 	void imprimir();
 private:
 	No *raiz;
